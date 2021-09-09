@@ -41,6 +41,7 @@ enum class SmuflAnchorId {
     cutOutNW,
     cutOutSE,
     cutOutSW,
+    opticalCenter,
 };
 
 //---------------------------------------------------------

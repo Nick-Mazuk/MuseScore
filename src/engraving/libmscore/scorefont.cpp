@@ -293,7 +293,8 @@ void ScoreFont::loadGlyphsWithAnchors(const QJsonObject& glyphsWithAnchors)
             { "cutOutNE", SmuflAnchorId::cutOutNE },
             { "cutOutNW", SmuflAnchorId::cutOutNW },
             { "cutOutSE", SmuflAnchorId::cutOutSE },
-            { "cutOutSW", SmuflAnchorId::cutOutSW }
+            { "cutOutSW", SmuflAnchorId::cutOutSW },
+            { "opticalCenter", SmuflAnchorId::opticalCenter }
         };
 
         for (const QString& anchorId : anchors.keys()) {
@@ -307,7 +308,13 @@ void ScoreFont::loadGlyphsWithAnchors(const QJsonObject& glyphsWithAnchors)
             double x = arr.at(0).toDouble();
             double y = arr.at(1).toDouble();
 
-            sym.setSmuflAnchor(search->second, PointF(x, -y) * SPATIUM20);
+            if (anchorId == "opticalCenter") {
+                sym.setSmuflAnchor(search->second, PointF(x, -y));
+            } else {
+                // TODO: explain why these values are multiplied by SPATIUM20
+                sym.setSmuflAnchor(search->second, PointF(x, -y) * SPATIUM20);
+            }
+
         }
     }
 }
