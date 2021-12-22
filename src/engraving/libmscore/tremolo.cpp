@@ -282,7 +282,7 @@ void Tremolo::layoutOneNoteTremolo(qreal x, qreal y, qreal h, qreal spatium)
     bool up = chord()->up();
     int upValue = up ? -1 : 1;
 
-    qreal yOffset = h - score()->styleMM(Sid::tremoloOutSidePadding).val();
+    qreal yOffset = h - score()->styleMM(Sid::tremoloOutSidePadding).val() * chord()->mag();
 
     int beams = chord()->beams();
     if (chord()->hook()) {
@@ -524,7 +524,7 @@ void Tremolo::layout()
             }
         }
         y = anchor1->y();
-        h = score()->styleMM(Sid::tremoloNoteSidePadding).val() + bbox().height();
+        h = (score()->styleMM(Sid::tremoloNoteSidePadding).val() + bbox().height()) * _chord1->mag();
     }
 
     if (twoNotes()) {

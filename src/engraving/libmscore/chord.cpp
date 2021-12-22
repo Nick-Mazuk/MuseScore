@@ -1333,9 +1333,11 @@ int Chord::calcMinStemLength()
         // buzz roll's height is actually half of the visual height,
         // so we need to multiply it by 2 to get the actual height
         int buzzRollMultiplier = _tremolo->isBuzzRoll() ? 2 : 1;
-        minStemLength += ceil(_tremolo->minHeight() * 4.0 * buzzRollMultiplier);
-        static const int outSidePadding = score()->styleMM(Sid::tremoloOutSidePadding).val() / _spatium * 4.0;
-        static const int noteSidePadding = score()->styleMM(Sid::tremoloNoteSidePadding).val() / _spatium * 4.0;
+        minStemLength += ceil(_tremolo->minHeight() * 4.0 * buzzRollMultiplier / mag());
+        int outSidePadding = score()->styleMM(Sid::tremoloOutSidePadding).val() / _spatium * 4.0 / mag();
+        // note: not sure why this next line shouldn't have `/ mag()`
+        // but tremolos at different sizes only correctly work without it
+        int noteSidePadding = score()->styleMM(Sid::tremoloNoteSidePadding).val() / _spatium * 4.0;
         int line = _up ? upNote()->line() : downNote()->line();
         line *= 2; // convert to quarter spaces
         int outsideStaffOffset = 0;
@@ -1490,6 +1492,7 @@ qreal Chord::calcDefaultStemLength()
     qreal _spatium = spatium();
     int defaultStemLength = (isSmall() ? score()->styleD(Sid::stemLengthSmall) : score()->styleD(Sid::stemLength)) * 4;
     defaultStemLength += stemLengthBeamAddition();
+    defaultStemLength *= mag();
     int chordHeight = (downLine() - upLine()) * 2; // convert to quarter spaces
     int stemLength = defaultStemLength;
 
@@ -1502,7 +1505,7 @@ qreal Chord::calcDefaultStemLength()
         return tab->chordStemLength(this) * _spatium;
     }
 
-    int minStemLengthQuarterSpaces = calcMinStemLength();
+    int minStemLengthQuarterSpaces = calcMinStemLength() * mag();
     _minStemLength = minStemLengthQuarterSpaces / 4.0 * _spatium;
 
     int staffLineCount = staffItem ? staffItem->lines(tick()) : 5;
